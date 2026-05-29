@@ -1,73 +1,56 @@
-# React + TypeScript + Vite
+# Trade Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript + Vite frontend for a trading dashboard.
 
-Currently, two official plugins are available:
+## Clone
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project uses the socket stress-test backend as a Git submodule:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone --recurse-submodules <your-repo-url>
+cd Trade-Dashboard
+npm install
+npm run setup:backend
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+If the repo was cloned without `--recurse-submodules`, run:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+git submodule update --init --recursive
+npm run setup:backend
+npm run dev
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+`npm run dev` starts both the frontend and backend together:
+
+- Frontend: http://localhost:5173
+- Backend WebSocket: ws://localhost:8080
+- Backend HTTP API: http://localhost:3000/intervals
+
+## Development
+
+Start the frontend and socket backend together:
+
+```bash
+npm run dev
+```
+
+Install backend dependencies before the first run:
+
+```bash
+npm run setup:backend
+```
+
+The backend comes from https://github.com/saxenanickk/socket-custom-load. The upstream README uses Bun, but these project scripts run it with Node/npm, so Bun is not required.
+
+## Scripts
+
+```bash
+npm run dev            # Start the Vite frontend and socket backend
+npm run dev:frontend   # Start only the Vite frontend
+npm run setup:backend  # Initialize the socket backend submodule and install backend deps
+npm run dev:backend    # Start only the socket backend
+npm run build          # Build the frontend
+npm run lint           # Run ESLint
 ```
