@@ -7,7 +7,7 @@ export const SUPPORTED_SYMBOLS = [
     'DOGEUSD',
   ] as const
 
-export type SymbolCode = (typeof SUPPORTED_SYMBOLS)[number]
+export type SymbolCode = (typeof SUPPORTED_SYMBOLS)[number];
 
 export type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected'
 
