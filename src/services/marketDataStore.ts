@@ -89,6 +89,8 @@ export interface TradeRowView {
   id: string
   priceLabel: string
   sizeLabel: string
+  tradeCount: number
+  tradeCountLabel: string
   side: Side
   timeLabel: string
   notionalLabel: string
@@ -180,7 +182,7 @@ class MarketDataStore {
 
   private focusedSymbol: SymbolCode
   private grouping: number
-  private status: StatusSnapshot 
+  private status: StatusSnapshot
 
   constructor() {
     this.focusedSymbol = getSavedFocusedSymbol()
