@@ -69,7 +69,7 @@ VITE_MARKET_WS_URL=ws://localhost:8080
 VITE_MARKET_HTTP_URL=http://localhost:3000
 ```
 
-`VITE_MARKET_WS_URL` controls the WebSocket connection. `VITE_MARKET_HTTP_URL` controls the HTTP interval endpoint used by the runtime load controls; `/intervals` is appended automatically when needed. In production, the frontend does not use the local Vite `/api/intervals` proxy. If `VITE_MARKET_HTTP_URL` is omitted, the app derives it from `VITE_MARKET_WS_URL` by converting `wss://` to `https://`.
+`VITE_MARKET_WS_URL` controls the WebSocket connection. `VITE_MARKET_HTTP_URL` controls the HTTP interval endpoint used by the runtime load controls; `/intervals` is appended automatically when needed. If `VITE_MARKET_HTTP_URL` is omitted, runtime load controls call `/api/intervals`, which is proxied by Vite locally and by the Vercel function in `api/intervals.js` in production.
 
 ## Production Deployment
 
@@ -79,10 +79,10 @@ After deploying the backend, set these frontend environment variables in Vercel:
 
 ```bash
 VITE_MARKET_WS_URL=wss://<backend-host>
-VITE_MARKET_HTTP_URL=https://<backend-host>
+MARKET_HTTP_URL=https://<backend-http-host>
 ```
 
-If the backend serves WebSocket and HTTP on the same host, `VITE_MARKET_HTTP_URL` is optional.
+`MARKET_HTTP_URL` is server-only and is used by the Vercel `/api/intervals` proxy. Set `VITE_MARKET_HTTP_URL` only if the backend HTTP API supports browser CORS and you want the browser to call it directly.
 
 ## Available Scripts
 
