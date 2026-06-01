@@ -8,7 +8,7 @@ import type {
 } from './marketDataWorkerProtocol'
 
 const DEFAULT_WS_URL = 'ws://localhost:8080'
-const DEFAULT_RUNTIME_URLS = ['/api/intervals']
+const DEFAULT_DEV_RUNTIME_URLS = ['/api/intervals']
 
 export type RuntimeLoadPreset = 'normal' | 'stress'
 
@@ -33,6 +33,26 @@ const toIntervalsUrl = (url: string) => {
   return trimmed.endsWith('/intervals') ? trimmed : `${trimmed}/intervals`
 }
 
+const toHttpUrlFromWsUrl = (url: string | undefined) => {
+  if (!url) return null
+  try {
+    const parsedUrl = new URL(url)
+    if (parsedUrl.protocol === 'ws:') {
+      parsedUrl.protocol = 'http:'
+    } else if (parsedUrl.protocol === 'wss:') {
+      parsedUrl.protocol = 'https:'
+    } else {
+      return null
+    }
+    parsedUrl.pathname = ''
+    parsedUrl.search = ''
+    parsedUrl.hash = ''
+    return parsedUrl.toString()
+  } catch {
+    return null
+  }
+}
+
 class MarketDataClient {
   private worker: Worker | null = null
   private started = false
@@ -43,7 +63,12 @@ class MarketDataClient {
 
   private get runtimeUrls() {
     const configuredUrl = import.meta.env.VITE_MARKET_HTTP_URL
-    return configuredUrl ? [configuredUrl] : DEFAULT_RUNTIME_URLS
+    if (configuredUrl) return [configuredUrl]
+
+    const derivedUrl = toHttpUrlFromWsUrl(import.meta.env.VITE_MARKET_WS_URL)
+    if (derivedUrl) return [derivedUrl]
+
+    return import.meta.env.DEV ? DEFAULT_DEV_RUNTIME_URLS : []
   }
 
   start() {
@@ -70,9 +95,16 @@ class MarketDataClient {
 
   async applyRuntimePreset(preset: RuntimeLoadPreset) {
     const payload = runtimeIntervalPresets[preset]
+    const runtimeUrls = this.runtimeUrls
     let lastError: unknown
 
-    for (const url of this.runtimeUrls) {
+    if (runtimeUrls.length === 0) {
+      throw new Error(
+        'Runtime load controls require VITE_MARKET_HTTP_URL or VITE_MARKET_WS_URL in production',
+      )
+    }
+
+    for (const url of runtimeUrls) {
       try {
         const response = await fetch(toIntervalsUrl(url), {
           method: 'POST',
