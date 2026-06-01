@@ -8,7 +8,7 @@ import type {
 } from './marketDataWorkerProtocol'
 
 const DEFAULT_WS_URL = 'ws://localhost:8080'
-const DEFAULT_RUNTIME_URLS = ['http://localhost:3002', 'http://localhost:3000']
+const DEFAULT_RUNTIME_URLS = ['/api/intervals']
 
 export type RuntimeLoadPreset = 'normal' | 'stress'
 
