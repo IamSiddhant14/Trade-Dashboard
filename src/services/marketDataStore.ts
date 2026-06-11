@@ -2,8 +2,14 @@ import {
   SUPPORTED_SYMBOLS,
   SYMBOL_META,
   type ConnectionStatus,
-  type Side,
+  type FocusSnapshot,
+  type OrderBookMetrics,
+  type OrderBookSnapshot,
+  type StatusSnapshot,
   type SymbolCode,
+  type TickerView,
+  type TradesSnapshot,
+  type TradeStats,
 } from '../types/marketData'
 import type { WorkerToMainMessage } from './marketDataWorkerProtocol'
 
@@ -45,74 +51,6 @@ class StoreSlice<T> {
     this.scheduled = true
     requestAnimationFrame(() => this.notifyNow())
   }
-}
-
-export interface TickerView {
-  lastPriceLabel: string
-  changePercent: number
-  changeLabel: string
-}
-
-export interface FocusSnapshot {
-  symbol: SymbolCode
-}
-
-export interface BookLevelView {
-  key: string
-  side: 'ask' | 'bid'
-  priceLabel: string
-  sizeLabel: string
-  cumulativeLabel: string
-  depthPercent: number
-  flash: 'increase' | 'decrease' | null
-  flashId: number
-}
-
-export interface OrderBookMetrics {
-  midPriceLabel: string
-  spreadLabel: string
-  spreadBpsLabel: string
-  imbalanceLabel: string
-}
-
-export interface OrderBookSnapshot {
-  symbol: SymbolCode
-  status: 'loading' | 'ready'
-  grouping: number
-  groupingOptions: number[]
-  asks: BookLevelView[]
-  bids: BookLevelView[]
-  metrics: OrderBookMetrics
-}
-
-export interface TradeRowView {
-  id: string
-  priceLabel: string
-  sizeLabel: string
-  tradeCount: number
-  tradeCountLabel: string
-  side: Side
-  timeLabel: string
-  notionalLabel: string
-}
-
-export interface TradeStats {
-  buyVolume: number
-  sellVolume: number
-  tradeCount: number
-  averageTradeSize: number
-}
-
-export interface TradesSnapshot {
-  symbol: SymbolCode
-  status: 'loading' | 'ready'
-  rows: TradeRowView[]
-  stats: TradeStats
-}
-
-export interface StatusSnapshot {
-  connectionStatus: ConnectionStatus
-  lastError: string | null
 }
 
 const emptyBookMetrics: OrderBookMetrics = {
@@ -293,4 +231,4 @@ class MarketDataStore {
   }
 }
 
-export const marketDataStore = new MarketDataStore()
+export const marketDataStore = new MarketDataStore();

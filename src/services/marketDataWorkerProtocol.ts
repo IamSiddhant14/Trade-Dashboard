@@ -1,4 +1,9 @@
-import type { OrderBookSnapshot, StatusSnapshot, TickerView, TradesSnapshot } from './marketDataStore'
+import type {
+  OrderBookSnapshot,
+  StatusSnapshot,
+  TickerView,
+  TradesSnapshot,
+} from '../types/marketData'
 import type { SymbolCode } from '../types/marketData'
 
 export type MainToWorkerMessage =

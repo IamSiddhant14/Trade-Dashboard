@@ -1,7 +1,6 @@
 import { memo, type ChangeEvent } from 'react'
 import { marketDataActions, useOrderBookData } from '../hooks/useMarketData'
-import type { BookLevelView } from '../services/marketDataStore'
-import { formatGroupingIncrement } from '../types/marketData'
+import { formatGroupingIncrement, type BookLevelView } from '../types/marketData'
 
 const areRowsEqual = (
   previous: { level: BookLevelView },

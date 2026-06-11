@@ -21,6 +21,74 @@ export type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected'
 
 export type Side = 'buy' | 'sell'
 
+export interface TickerView {
+  lastPriceLabel: string
+  changePercent: number
+  changeLabel: string
+}
+
+export interface FocusSnapshot {
+  symbol: SymbolCode
+}
+
+export interface BookLevelView {
+  key: string
+  side: 'ask' | 'bid'
+  priceLabel: string
+  sizeLabel: string
+  cumulativeLabel: string
+  depthPercent: number
+  flash: 'increase' | 'decrease' | null
+  flashId: number
+}
+
+export interface OrderBookMetrics {
+  midPriceLabel: string
+  spreadLabel: string
+  spreadBpsLabel: string
+  imbalanceLabel: string
+}
+
+export interface OrderBookSnapshot {
+  symbol: SymbolCode
+  status: 'loading' | 'ready'
+  grouping: number
+  groupingOptions: number[]
+  asks: BookLevelView[]
+  bids: BookLevelView[]
+  metrics: OrderBookMetrics
+}
+
+export interface TradeRowView {
+  id: string
+  priceLabel: string
+  sizeLabel: string
+  tradeCount: number
+  tradeCountLabel: string
+  side: Side
+  timeLabel: string
+  notionalLabel: string
+}
+
+export interface TradeStats {
+  buyVolume: number
+  sellVolume: number
+  tradeCount: number
+  averageTradeSize: number
+}
+
+export interface TradesSnapshot {
+  symbol: SymbolCode
+  status: 'loading' | 'ready'
+  rows: TradeRowView[]
+  stats: TradeStats
+}
+
+export interface StatusSnapshot {
+  connectionStatus: ConnectionStatus
+  lastError: string | null
+}
+
 export interface SymbolMeta {
   min: number
   max: number

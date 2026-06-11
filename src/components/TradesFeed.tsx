@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react'
 import { useTradesData } from '../hooks/useMarketData'
-import type { TradeRowView } from '../services/marketDataStore'
+import type { TradeRowView } from '../types/marketData'
 
 const BOTTOM_THRESHOLD_PX = 24
 

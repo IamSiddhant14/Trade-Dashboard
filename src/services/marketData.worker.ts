@@ -3,23 +3,22 @@ import {
   SUPPORTED_SYMBOLS,
   SYMBOL_META,
   isSymbolCode,
+  type BookLevelView,
   type MarketMessage,
+  type OrderBookMetrics,
+  type OrderBookSnapshot,
   type OrderbookMessage,
   type Side,
+  type StatusSnapshot,
   type SubscribeChannel,
   type SymbolCode,
   type TickerMessage,
+  type TickerView,
   type TradeMessage,
+  type TradeRowView,
+  type TradeStats,
+  type TradesSnapshot,
 } from '../types/marketData'
-import type {
-  BookLevelView,
-  OrderBookMetrics,
-  OrderBookSnapshot,
-  StatusSnapshot,
-  TickerView,
-  TradesSnapshot,
-  TradeStats,
-} from './marketDataStore'
 import type {
   MainToWorkerMessage,
   WorkerToMainMessage,
@@ -82,6 +81,7 @@ interface MutableTradeAggregate {
   windowStartMs: number
   timeMs: number
   side: Side
+  view: TradeRowView
 }
 
 const workerScope = self as unknown as WorkerScope
@@ -684,10 +684,11 @@ class MarketDataWorkerRuntime {
       else activeRow.sellVolume += trade.size
       activeRow.side =
         activeRow.buyVolume >= activeRow.sellVolume ? 'buy' : 'sell'
+      activeRow.view = this.createTradeRowView(activeRow)
       return
     }
 
-    const row: MutableTradeAggregate = {
+    const rowWithoutView = {
       id: `${trade.symbol}:${priceKey}:${timeMs}:${this.tradeRows.length}`,
       symbol: trade.symbol,
       price,
@@ -698,6 +699,10 @@ class MarketDataWorkerRuntime {
       windowStartMs: timeMs,
       timeMs,
       side,
+    }
+    const row: MutableTradeAggregate = {
+      ...rowWithoutView,
+      view: this.createTradeRowView(rowWithoutView),
     }
     this.tradeRows.unshift(row)
     this.activeTradeRowsByPrice.set(priceKey, row)
@@ -754,20 +759,24 @@ class MarketDataWorkerRuntime {
     return {
       symbol: this.focusedSymbol,
       status: this.tradeRows.length > 0 ? 'ready' : 'loading',
-      rows: visibleRows.map((row) => {
-        const notional = row.price * row.size
-        return {
-          id: row.id,
-          priceLabel: formatPrice(row.symbol, row.price),
-          sizeLabel: formatSize(row.size),
-          tradeCount: row.tradeCount,
-          tradeCountLabel: row.tradeCount > 1 ? `x${row.tradeCount}` : '1',
-          side: row.side,
-          timeLabel: formatTime(row.timeMs),
-          notionalLabel: formatNotional(notional),
-        }
-      }),
+      rows: visibleRows.map((row) => row.view),
       stats: this.getRollingStats(),
+    }
+  }
+
+  private createTradeRowView(
+    row: Omit<MutableTradeAggregate, 'view'>,
+  ): TradeRowView {
+    const notional = row.price * row.size
+    return {
+      id: row.id,
+      priceLabel: formatPrice(row.symbol, row.price),
+      sizeLabel: formatSize(row.size),
+      tradeCount: row.tradeCount,
+      tradeCountLabel: row.tradeCount > 1 ? `x${row.tradeCount}` : '1',
+      side: row.side,
+      timeLabel: formatTime(row.timeMs),
+      notionalLabel: formatNotional(notional),
     }
   }
 
