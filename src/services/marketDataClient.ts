@@ -36,6 +36,7 @@ const toIntervalsUrl = (url: string) => {
 class MarketDataClient {
   private worker: Worker | null = null
   private started = false
+  private startupPresetApplied = false
 
   private get wsUrl() {
     return import.meta.env.VITE_MARKET_WS_URL ?? DEFAULT_WS_URL
@@ -51,6 +52,7 @@ class MarketDataClient {
   start() {
     if (this.started) return
     this.started = true
+    this.applyStartupPreset()
     this.postToWorker({
       type: 'start',
       wsUrl: this.wsUrl,
@@ -97,6 +99,21 @@ class MarketDataClient {
         lastError instanceof Error ? lastError.message : 'request failed'
       }`,
     )
+  }
+
+  private applyStartupPreset() {
+    if (this.startupPresetApplied) return
+    this.startupPresetApplied = true
+
+    void this.applyRuntimePreset('normal').catch((error) => {
+      const status = marketDataStore.getStatusSnapshot()
+      marketDataStore.setConnectionStatus(
+        status.connectionStatus,
+        `Unable to set normal load: ${
+          error instanceof Error ? error.message : 'request failed'
+        }`,
+      )
+    })
   }
 
   private postToWorker(message: MainToWorkerMessage) {

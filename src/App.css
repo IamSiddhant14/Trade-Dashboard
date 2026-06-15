@@ -90,7 +90,7 @@
 
 .load-toggle button.stress.active {
   border-color: var(--red);
-  background: #fef2f2;
+  background: #3b1218;
 }
 
 .load-toggle button:disabled {
@@ -251,7 +251,7 @@
   padding: 0 10px;
   column-gap: 20px;
   overflow: hidden;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
 }
 
 .book-row {
@@ -515,7 +515,7 @@ input {
 
 @keyframes flash-green {
   from {
-    background: #dcfce7;
+    background: rgba(34, 197, 94, 0.18);
   }
   to {
     background: transparent;
@@ -524,7 +524,7 @@ input {
 
 @keyframes flash-red {
   from {
-    background: #fee2e2;
+    background: rgba(248, 113, 113, 0.18);
   }
   to {
     background: transparent;
